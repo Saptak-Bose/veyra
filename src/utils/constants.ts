@@ -1,12 +1,17 @@
+import { AstroidIcon, HistoryIcon, LayoutDashboardIcon } from "lucide-react";
+
 export const dummyUser = {
   id: "user_mock_001",
   fullName: "Alex Rivera",
   firstName: "Alex",
   lastName: "Rivera",
   name: "Alex Rivera",
-  primaryEmailAddress: {
-    emailAddress: "alex.rivera@example.com",
-  },
+  username: null,
+  emailAddresses: [
+    {
+      emailAddress: "alex.rivera@example.com",
+    },
+  ],
   imageUrl:
     "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
 };
@@ -229,5 +234,26 @@ export const dummyInitialChatMessages = [
     senderName: "Marcus Vance",
     text: "Loud and clear! Ready for the walkthrough.",
     time: "02:16 PM",
+  },
+];
+
+export const navLinks = [
+  {
+    id: "link_01",
+    path: "/dashboard",
+    label: "Dashboard",
+    Icon: LayoutDashboardIcon,
+  },
+  {
+    id: "link_02",
+    path: "/sessions",
+    label: "Sessions",
+    Icon: HistoryIcon,
+  },
+  {
+    id: "link_03",
+    path: "/pricing",
+    label: "Pricing",
+    Icon: AstroidIcon,
   },
 ];

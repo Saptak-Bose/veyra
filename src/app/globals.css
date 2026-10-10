@@ -8,6 +8,7 @@
   --font-sans: var(--font-urbanist);
   --font-mono: var(--font-geist-mono);
   --background-image-layout-bg: url('/layout_bg.png');
+  --background-image-login-bg: url('/login_bg.png');
 }
 
 @layer base {

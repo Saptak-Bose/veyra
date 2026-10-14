@@ -1,5 +1,5 @@
-import Footer from "@/components/footer";
-import Navbar from "@/components/navbar";
+import Footer from "@/components/global/footer";
+import Navbar from "@/components/global/navbar";
 import { ReactNode } from "react";
 
 export default function ProtectedLayout({

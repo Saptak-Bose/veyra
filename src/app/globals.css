@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "tw-animate-css";
 
 @theme inline {
   --color-primary: #004cff;
@@ -7,8 +8,8 @@
   --color-primary-border: #7a9cff;
   --font-sans: var(--font-urbanist);
   --font-mono: var(--font-geist-mono);
-  --background-image-layout-bg: url('/layout_bg.png');
-  --background-image-login-bg: url('/login_bg.png');
+  --background-image-layout-bg: url("/layout_bg.png");
+  --background-image-login-bg: url("/login_bg.png");
 }
 
 @layer base {

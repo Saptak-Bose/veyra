@@ -1,7 +1,7 @@
 import DateTimeDialog from "@/components/dashboard/date-time-dialog";
 import MeetingForm from "@/components/dashboard/meeting-form";
-import { dummyStats } from "@/utils/constants";
-import { auth, currentUser } from "@clerk/nextjs/server";
+import { dummyStats, dummyUser } from "@/utils/constants";
+import { auth } from "@clerk/nextjs/server";
 import { ShieldCheckIcon } from "lucide-react";
 
 type Props = object;
@@ -9,7 +9,7 @@ type Props = object;
 export default async function DashboardPage({}: Props) {
   await auth.protect();
 
-  const user = await currentUser();
+  const user = dummyUser;
   const stats = dummyStats;
   const username = user?.fullName ?? "User";
   const userEmail = user?.emailAddresses[0]?.emailAddress ?? "user@gmail.com";

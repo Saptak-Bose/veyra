@@ -1,6 +1,6 @@
 "use client";
 
-import { navLinks } from "@/utils/constants";
+import { dummyUser, navLinks } from "@/utils/constants";
 import { UserButton, useUser } from "@clerk/nextjs";
 import { HistoryIcon } from "lucide-react";
 import Image from "next/image";
@@ -10,7 +10,8 @@ import { usePathname } from "next/navigation";
 type Props = object;
 
 export default function Navbar({}: Props) {
-  const { isSignedIn, user } = useUser();
+  const { isSignedIn } = useUser();
+  const user = dummyUser;
   const pathname = usePathname();
   const username =
     user?.username ??

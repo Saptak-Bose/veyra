@@ -42,7 +42,7 @@ export default function MeetingForm({}: Props) {
 
     const cleanId = joinId.trim();
 
-    if (!cleanId) {
+    if (!/^[a-z]{3}(?:-[a-z]{3}){2}$/.test(cleanId)) {
       toast.error("Please enter a valid meeting code.", {
         position: "top-center",
         richColors: true,
@@ -51,7 +51,7 @@ export default function MeetingForm({}: Props) {
       return;
     }
 
-    router.push(`/meeting/${cleanId}`);
+    router.push(`/meeting/${encodeURIComponent(cleanId)}`);
   };
 
   return (

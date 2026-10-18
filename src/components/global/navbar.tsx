@@ -1,6 +1,6 @@
 "use client";
 
-import { dummyUser, navLinks } from "@/utils/constants";
+import { navLinks } from "@/utils/constants";
 import { UserButton, useUser } from "@clerk/nextjs";
 import { HistoryIcon } from "lucide-react";
 import Image from "next/image";
@@ -10,8 +10,7 @@ import { usePathname } from "next/navigation";
 type Props = object;
 
 export default function Navbar({}: Props) {
-  const { isSignedIn } = useUser();
-  const user = dummyUser;
+  const { isSignedIn, user } = useUser();
   const pathname = usePathname();
   const username =
     user?.username ??
@@ -32,7 +31,7 @@ export default function Navbar({}: Props) {
             className="size-6.5"
           />
           <span className="text-2xl font-medium tracking-tight text-slate-900 flex items-center">
-            Veyra<span className="text-primary">.</span>
+            VΞyra<span className="text-primary">.</span>
           </span>
         </Link>
         {isSignedIn &&

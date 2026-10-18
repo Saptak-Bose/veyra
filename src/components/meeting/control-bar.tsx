@@ -144,7 +144,7 @@ export default function ControlBar({
         )}
       </div>
       <div className="hidden sm:block w-32 text-right">
-        <span className="font-medium text-slate-400">Veyra Room</span>
+        <span className="font-medium text-slate-400">VΞyra. Room</span>
       </div>
     </footer>
   );

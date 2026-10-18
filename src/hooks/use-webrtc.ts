@@ -1,15 +1,16 @@
-import { dummyRemoteParticipants, dummyUser } from "@/utils/constants";
+import { dummyRemoteParticipants } from "@/utils/constants";
+import type { MeetingParticipant, MeetingUser } from "@/utils/types";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 
 export const useWebRTC = (
   _roomId: string,
-  user: typeof dummyUser,
+  user: MeetingUser,
   onMeetingEnded: (message?: string) => void,
   _enabled: boolean = true,
 ) => {
   const [localStream, setLocalStream] = useState<MediaStream | null>(null);
-  const [remoteUsers, setRemoteUsers] = useState(dummyRemoteParticipants);
+  const [remoteUsers, setRemoteUsers] = useState<MeetingParticipant[] | []>(dummyRemoteParticipants);
   const [audioEnabled, setAudioEnabled] = useState(true);
   const [videoEnabled, setVideoEnabled] = useState(true);
   const localStreamRef = useRef<MediaStream | null>(null);

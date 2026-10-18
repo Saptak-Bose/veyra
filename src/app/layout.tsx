@@ -1,23 +1,23 @@
 import type { Metadata } from "next";
-import { Urbanist, Geist_Mono } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 import { Toaster } from "sonner";
 import { ClerkProvider } from "@clerk/nextjs";
 
-const urbanist = Urbanist({
+const urbanist = localFont({
+  src: "./fonts/urbanist-latin.woff2",
   variable: "--font-urbanist",
-  subsets: ["latin"],
   display: "swap",
 });
 
-const geistMono = Geist_Mono({
+const geistMono = localFont({
+  src: "./fonts/geist-mono-latin.woff2",
   variable: "--font-geist-mono",
-  subsets: ["latin"],
   display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: "Veyra",
+  title: "VΞyra.",
   description: "Premium video meetings, reimagined.",
 };
 

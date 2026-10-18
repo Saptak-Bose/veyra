@@ -1,3 +1,4 @@
+import { PricingTable } from "@clerk/nextjs";
 import { auth } from "@clerk/nextjs/server";
 
 type Props = object;
@@ -5,5 +6,18 @@ type Props = object;
 export default async function PricingPage({}: Props) {
   await auth.protect();
 
-  return <div>PricingPage</div>;
+  return (
+    <div className="max-w-4xl mx-auto w-full min-h-[calc(100vh-7rem)] flex flex-col gap-5 items-start justify-center p-8">
+      <div className="mb-8">
+        <h1 className="text-3xl font-medium tracking-tight text-slate-900">
+          Upgrade your plan.
+        </h1>
+        <p className="text-sm text-slate-500 mt-1">
+          Choose the plan that&apos;s right for you and unlock all the features
+          of VΞyra.
+        </p>
+      </div>
+      <PricingTable />
+    </div>
+  );
 }

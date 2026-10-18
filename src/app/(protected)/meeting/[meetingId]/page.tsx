@@ -1,6 +1,7 @@
 import MeetingRoom from "@/components/meeting/meeting-room";
-import { dummyMeetingDetails, dummyUser } from "@/utils/constants";
-import { auth } from "@clerk/nextjs/server";
+import type { MeetingUser } from "@/utils/types";
+import { dummyMeetingDetails } from "@/utils/constants";
+import { auth, currentUser } from "@clerk/nextjs/server";
 
 type Props = {
   params: Promise<{
@@ -12,7 +13,15 @@ export default async function MeetingRoomPage({ params }: Props) {
   await auth.protect();
 
   const { meetingId } = await params;
-  const user = dummyUser;
+  const user = await currentUser();
+  if (!user) {
+    throw new Error("Authenticated user could not be loaded.");
+  }
+
+  const meetingUser: MeetingUser = {
+    id: user.id,
+    fullName: user.fullName,
+  };
 
   return (
     <div className="h-screen w-screen bg-slate-100 text-slate-900 flex flex-col overflow-hidden relative font-sans">
@@ -25,7 +34,7 @@ export default async function MeetingRoomPage({ params }: Props) {
           <span className="size-1.5 rounded-full bg-emerald-500 animate-pulse" />
         </div>
       </header>
-      <MeetingRoom user={user} meetingId={meetingId} />
+      <MeetingRoom user={meetingUser} meetingId={meetingId} />
     </div>
   );
 }

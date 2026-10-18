@@ -1,4 +1,4 @@
-import { dummyRemoteParticipants, dummyUser } from "@/utils/constants";
+import type { MeetingParticipant, MeetingUser } from "../../utils/types";
 import {
   CrownIcon,
   MicIcon,
@@ -11,10 +11,10 @@ import {
 type Props = {
   isOpen: boolean;
   onClose: () => void;
-  localUser: typeof dummyUser;
+  localUser: MeetingUser;
   localAudio: boolean;
   localVideo: boolean;
-  remoteUsers: typeof dummyRemoteParticipants;
+  remoteUsers: MeetingParticipant[];
   meetingHostId: string;
 };
 
@@ -33,7 +33,7 @@ export default function ParticipantList({
     {
       socketId: "local",
       userId: localUser?.id,
-      userName: `${localUser?.name ?? "You"} (You)`,
+      userName: `${localUser?.fullName ?? "You"} (You)`,
       audioEnabled: localAudio,
       videoEnabled: localVideo,
       isLocal: true,

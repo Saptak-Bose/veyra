@@ -1,7 +1,7 @@
 "use client";
 
 import { useWebRTC } from "@/hooks/use-webrtc";
-import { dummyMeetingDetails, dummyUser } from "@/utils/constants";
+import { dummyMeetingDetails } from "@/utils/constants";
 import { useRouter } from "next/navigation";
 import { useCallback, useState } from "react";
 import VideoGrid from "./video-grid";
@@ -10,9 +10,10 @@ import { useChat } from "@/hooks/use-chat";
 import ParticipantList from "./participant-list";
 import ControlBar from "./control-bar";
 import { toast } from "sonner";
+import type { MeetingUser } from "../../utils/types";
 
 type Props = {
-  user: typeof dummyUser;
+  user: MeetingUser;
   meetingId: string;
 };
 

@@ -1,10 +1,10 @@
-import { dummyRemoteParticipants, dummyUser } from "@/utils/constants";
 import VideoTile from "./video-tile";
+import type { MeetingParticipant, MeetingUser } from "../../utils/types";
 
 type Props = {
   localStream: MediaStream | null;
-  localUser: typeof dummyUser;
-  remoteUsers: typeof dummyRemoteParticipants;
+  localUser: MeetingUser;
+  remoteUsers: MeetingParticipant[];
   audioEnabled: boolean;
   videoEnabled: boolean;
 };
@@ -35,7 +35,7 @@ export default function VideoGrid({
       >
         <VideoTile
           stream={localStream}
-          name={localUser?.name ?? "You"}
+          name={localUser?.fullName ?? "You"}
           isLocal={true}
           audioEnabled={audioEnabled}
           videoEnabled={videoEnabled}

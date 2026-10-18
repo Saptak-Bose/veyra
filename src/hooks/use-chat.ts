@@ -1,8 +1,9 @@
-import { dummyInitialChatMessages, dummyUser } from "@/utils/constants";
+import { dummyInitialChatMessages } from "@/utils/constants";
+import type { ChatMessage, MeetingUser } from "@/utils/types";
 import { useCallback, useState } from "react";
 
-export const useChat = (_roomId: string, user: typeof dummyUser) => {
-  const [messages, setMessages] = useState(dummyInitialChatMessages);
+export const useChat = (_roomId: string, user: MeetingUser) => {
+  const [messages, setMessages] = useState<ChatMessage[] | []>(dummyInitialChatMessages);
   const [unreadCount, setUnreadCount] = useState(0);
   const [isChatOpen, setIsChatOpen] = useState(false);
 
@@ -13,7 +14,7 @@ export const useChat = (_roomId: string, user: typeof dummyUser) => {
       const message = {
         id: Date.now().toString(),
         text: text.trim(),
-        senderName: user.name ?? user.fullName ?? "You",
+        senderName: user.fullName ?? "You",
         senderId: user.id,
         time: new Date().toLocaleTimeString([], {
           hour: "2-digit",

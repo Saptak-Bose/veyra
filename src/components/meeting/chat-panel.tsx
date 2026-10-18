@@ -1,15 +1,15 @@
 "use client";
 
-import { dummyInitialChatMessages, dummyUser } from "@/utils/constants";
+import type { MeetingUser, ChatMessage } from "../../utils/types";
 import { SendIcon, XIcon } from "lucide-react";
 import { type SubmitEvent, useEffect, useRef, useState } from "react";
 
 type Props = {
   isOpen: boolean;
   onClose: () => void;
-  messages: typeof dummyInitialChatMessages;
+  messages: ChatMessage[];
   onSendMessage: (text: string) => void;
-  currentUser: typeof dummyUser;
+  currentUser: MeetingUser;
 };
 
 export default function ChatPanel({

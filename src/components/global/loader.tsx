@@ -4,7 +4,7 @@ type Props = {
   text?: string;
 };
 
-export default function Loader({ text = "Loading..." }: Props) {
+export default function Loader({ text = "Encrypting..." }: Props) {
   return (
     <div className="fixed inset-0 flex flex-col items-center justify-center bg-slate-50 text-slate-900 z-50">
       <div className="relative flex items-center justify-center">

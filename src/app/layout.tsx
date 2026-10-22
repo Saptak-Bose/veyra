@@ -3,6 +3,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import { Toaster } from "sonner";
 import { ClerkProvider } from "@clerk/nextjs";
+import ApiAuthProvider from "@/components/providers/api-auth-provider";
 
 const urbanist = localFont({
   src: "./fonts/urbanist-latin.woff2",
@@ -29,8 +30,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         cz-shortcut-listen="true"
       >
         <ClerkProvider>
-          {children}
-          <Toaster />
+          <ApiAuthProvider>
+            {children}
+            <Toaster />
+          </ApiAuthProvider>
         </ClerkProvider>
       </body>
     </html>

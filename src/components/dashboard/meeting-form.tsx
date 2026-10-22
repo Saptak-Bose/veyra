@@ -1,57 +1,102 @@
 "use client";
 
+import { api } from "@/config/api";
+import type { NewMeeting } from "@/utils/types";
+import { getApiErrorMessage } from "@/utils/api-error";
+import { useAuth } from "@clerk/nextjs";
 import { ArrowRightIcon, KeyboardIcon, PlusIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState, type SubmitEvent } from "react";
 import { toast } from "sonner";
 
-type Props = object;
+type Props = {
+  username: string;
+};
 
-export default function MeetingForm({}: Props) {
+export default function MeetingForm({ username }: Props) {
   const [isCreating, setIsCreating] = useState(false);
   const [joinId, setJoinId] = useState("");
   const router = useRouter();
+  const { getToken } = useAuth();
 
-  const handleCreateMeeting = () => {
+  const handleCreateMeeting = async () => {
     setIsCreating(true);
 
-    const chars = "abcdefghijklmnopqrstuvwxyz";
+    try {
+      const token = await getToken();
 
-    const seg = () =>
-      Array.from(
+      const { data: meeting } = await api.post<NewMeeting>(
+        "/meetings",
         {
-          length: 3,
+          title: `${username}'s meeting`,
         },
-        () => chars[Math.floor(Math.random() * chars.length)],
-      ).join("");
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
 
-    const newMeetingId = `${seg()}-${seg()}-${seg()}`;
+      if (!meeting?.meetingId) {
+        throw new Error("The server returned an invalid meeting response.");
+      }
 
-    setTimeout(() => {
-      setIsCreating(false);
+      const meetingId = meeting.meetingId;
+
       toast.success("Meeting created successfully!", {
-        position: "top-center",
+        position: "bottom-center",
         richColors: true,
       });
-      router.push(`/meeting/${newMeetingId}`);
-    }, 400);
+
+      router.push(`/meeting/${encodeURIComponent(meetingId)}`);
+    } catch (error) {
+      const errorMessage = getApiErrorMessage(error);
+
+      toast.error(`Failed to create a new meeting. ${errorMessage}`, {
+        position: "bottom-center",
+        richColors: true,
+      });
+
+      console.error("Error creating a new meeting:", error);
+    } finally {
+      setIsCreating(false);
+    }
   };
 
-  const handleJoinMeeting = (e: SubmitEvent<HTMLFormElement>) => {
+  const handleJoinMeeting = async (e: SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     const cleanId = joinId.trim();
 
     if (!/^[a-z]{3}(?:-[a-z]{3}){2}$/.test(cleanId)) {
       toast.error("Please enter a valid meeting code.", {
-        position: "top-center",
+        position: "bottom-center",
         richColors: true,
       });
 
       return;
     }
 
-    router.push(`/meeting/${encodeURIComponent(cleanId)}`);
+    try {
+      const token = await getToken();
+
+      await api.get(`/meetings/${encodeURIComponent(cleanId)}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      router.push(`/meeting/${encodeURIComponent(cleanId)}`);
+    } catch (error) {
+      const errorMessage = getApiErrorMessage(error);
+
+      toast.error(`Failed to join the meeting. ${errorMessage}`, {
+        position: "bottom-center",
+        richColors: true,
+      });
+
+      console.error("Error joining the meeting:", error);
+    }
   };
 
   return (

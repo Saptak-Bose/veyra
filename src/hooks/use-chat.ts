@@ -1,11 +1,34 @@
-import { dummyInitialChatMessages } from "@/utils/constants";
+import { socket } from "@/config/socket";
 import type { ChatMessage, MeetingUser } from "@/utils/types";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
-export const useChat = (_roomId: string, user: MeetingUser) => {
-  const [messages, setMessages] = useState<ChatMessage[] | []>(dummyInitialChatMessages);
+export const useChat = (roomId: string, user: MeetingUser) => {
+  const [messages, setMessages] = useState<ChatMessage[] | []>([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [isChatOpen, setIsChatOpen] = useState(false);
+  const isChatOpenRef = useRef(isChatOpen);
+
+  useEffect(() => {
+    isChatOpenRef.current = isChatOpen;
+  }, [isChatOpen]);
+
+  useEffect(() => {
+    if (!roomId) return;
+
+    const handleReceiveMessage = (msg: ChatMessage) => {
+      setMessages((prevMsgs) => [...prevMsgs, msg]);
+
+      if (!isChatOpenRef.current) {
+        setUnreadCount((prevCount) => prevCount + 1);
+      }
+    };
+
+    socket.on("receive-message", handleReceiveMessage);
+
+    return () => {
+      socket.off("receive-message", handleReceiveMessage);
+    };
+  }, [roomId]);
 
   const sendMessage = useCallback(
     (text: string) => {
@@ -16,15 +39,18 @@ export const useChat = (_roomId: string, user: MeetingUser) => {
         text: text.trim(),
         senderName: user.fullName ?? "You",
         senderId: user.id,
-        time: new Date().toLocaleTimeString([], {
+        timestamp: new Date().toLocaleTimeString([], {
           hour: "2-digit",
           minute: "2-digit",
         }),
       };
 
-      setMessages((prevMessages) => [...prevMessages, message]);
+      socket.emit("send-message", {
+        roomId,
+        message,
+      });
     },
-    [user],
+    [user, roomId],
   );
 
   const toggleChat = useCallback(() => {

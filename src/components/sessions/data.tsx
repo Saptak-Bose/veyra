@@ -1,27 +1,82 @@
 "use client";
 
-import { dummySessions } from "@/utils/constants";
-import type { Session } from "@/utils/types";
+import type { Session, SessionResponse, SessionsResponse } from "@/utils/types";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import EmptySessions from "./empty-sessions";
 import SessionCard from "./session-card";
 import SessionDetailModal from "./session-detail-modal";
+import { useAuth } from "@clerk/nextjs";
+import { api } from "@/config/api";
+import { getApiErrorMessage } from "@/utils/api-error";
+import { toast } from "sonner";
+import Loader from "../global/loader";
 
 type Props = object;
 
 export default function SessionsData({}: Props) {
-  const [sessions] = useState<Session[] | [] | null>(dummySessions as Session[]);
+  const [sessions, setSessions] = useState<Session[] | []>([]);
   const [selectedSession, setSelectedSession] = useState<Session | null>(null);
   const router = useRouter();
+  const [loading, setLoading] = useState(true);
+  const { getToken } = useAuth();
 
-  const openSessionDetails = (sessionId: number) => {
-    const session = sessions?.find((s) => s.id === sessionId);
+  useEffect(() => {
+    const fetchSessions = async () => {
+      try {
+        const token = await getToken();
 
-    if (session) {
-      setSelectedSession(session);
+        const { data } = await api.get<SessionsResponse>("/meetings/sessions", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        setSessions(data.meetings);
+      } catch (error) {
+        const errorMessage = getApiErrorMessage(error);
+
+        toast.error(`Failed to fetch sessions. ${errorMessage}`, {
+          position: "bottom-center",
+          richColors: true,
+        });
+
+        console.error("Error fetching sessions:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchSessions();
+  }, [getToken]);
+
+  const openSessionDetails = async (sessionId: number) => {
+    try {
+      const token = await getToken();
+
+      const { data } = await api.get<SessionResponse>(
+        `/meetings/sessions/${sessionId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+
+      setSelectedSession(data.meeting);
+    } catch (error) {
+      const errorMessage = getApiErrorMessage(error);
+
+      toast.error(`Failed to fetch session details. ${errorMessage}`, {
+        position: "bottom-center",
+        richColors: true,
+      });
+
+      console.error("Error fetching session details:", error);
     }
   };
+
+  if (loading) return <Loader text="Fetching meeting details..." />;
 
   return (
     <>

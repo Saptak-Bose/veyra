@@ -75,7 +75,7 @@ export default function ChatPanel({
                   <span className="text-xs font-semibold text-slate-500">
                     {isMe ? "You" : msg.senderName}
                   </span>
-                  <span className="text-[10px] text-slate-400">{msg.time}</span>
+                  <span className="text-[10px] text-slate-400">{msg.timestamp}</span>
                 </div>
                 <div
                   className={`px-3.5 py-2.5 rounded-2xl max-w-[85%] text-sm leading-relaxed shadow-xs ${isMe ? "bg-primary text-white rounded-tr-none font-medium" : "bg-slate-100 text-slate-800 rounded-tl-none border border-slate-200 font-medium"}`}

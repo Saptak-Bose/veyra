@@ -54,7 +54,7 @@ export default function ControlBar({
     setCopied(true);
 
     toast.success("Meeting link copied to clipboard!", {
-      position: "top-center",
+      position: "bottom-center",
       richColors: true,
     });
 

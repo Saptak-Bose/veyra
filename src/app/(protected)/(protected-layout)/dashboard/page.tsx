@@ -1,21 +1,44 @@
 import DateTimeDialog from "@/components/dashboard/date-time-dialog";
 import MeetingForm from "@/components/dashboard/meeting-form";
-import { dummyStats } from "@/utils/constants";
+import ErrorToast from "@/components/global/error-toast";
+import { api } from "@/config/api";
+import type { MeetingStats } from "@/utils/types";
+import { getApiErrorMessage } from "@/utils/api-error";
 import { auth, currentUser } from "@clerk/nextjs/server";
 import { ShieldCheckIcon } from "lucide-react";
 
 type Props = object;
 
+export const dynamic = "force-dynamic";
+
 export default async function DashboardPage({}: Props) {
   await auth.protect();
 
   const user = await currentUser();
-  const stats = dummyStats;
+  let stats: MeetingStats | null = null;
+  let statsError: string | null = null;
   const username = user?.fullName ?? "User";
   const userEmail = user?.emailAddresses[0]?.emailAddress ?? "user@gmail.com";
+  const { getToken } = await auth();
+  const token = await getToken();
+
+  try {
+    const { data } = await api.get<MeetingStats>("/meetings/stats", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    stats = data;
+  } catch (error) {
+    statsError = getApiErrorMessage(error);
+
+    console.error("Error fetching meeting stats:", error);
+  }
 
   return (
     <div className="flex-1 max-w-7xl w-full mx-auto p-6 md:p-12 flex flex-col justify-center">
+      {statsError && <ErrorToast message={statsError} />}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
         <div className="lg:col-span-7 space-y-8">
           <div className="space-y-3">
@@ -33,7 +56,7 @@ export default async function DashboardPage({}: Props) {
               ensures seamless video calls with top-notch security and privacy,
               making it perfect for both personal and professional use.
             </p>
-            <MeetingForm />
+            <MeetingForm username={username} />
           </div>
         </div>
         <div className="lg:col-span-5 flex flex-col items-center justify-center space-y-4">
@@ -51,9 +74,9 @@ export default async function DashboardPage({}: Props) {
                   <span className="text-slate-900">{userEmail}</span>
                 </p>
                 <span
-                  className={`px-4 py-1 rounded-full font-semibold text-xs uppercase ${stats.plan === "premium" ? "bg-blue-700 text-white" : "bg-white/70 text-slate-800"}`}
+                  className={`px-4 py-1 rounded-full font-semibold text-xs uppercase ${stats?.plan === "studio" ? "bg-blue-700 text-white" : "bg-white/70 text-slate-800"}`}
                 >
-                  {stats?.plan ?? "Free"}
+                  {stats?.plan ?? "Essential"}
                 </span>
               </div>
               {stats && (

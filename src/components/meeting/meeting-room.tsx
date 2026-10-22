@@ -1,26 +1,32 @@
 "use client";
 
 import { useWebRTC } from "@/hooks/use-webrtc";
-import { dummyMeetingDetails } from "@/utils/constants";
 import { useRouter } from "next/navigation";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import VideoGrid from "./video-grid";
 import ChatPanel from "./chat-panel";
 import { useChat } from "@/hooks/use-chat";
 import ParticipantList from "./participant-list";
 import ControlBar from "./control-bar";
 import { toast } from "sonner";
-import type { MeetingUser } from "../../utils/types";
+import type { MeetingUser, MeetingWithDetails } from "@/utils/types";
+import Loader from "../global/loader";
 
 type Props = {
   user: MeetingUser;
   meetingId: string;
+  meetingData: MeetingWithDetails | null;
 };
 
-export default function MeetingRoom({ meetingId, user }: Props) {
+export default function MeetingRoom({ meetingId, user, meetingData }: Props) {
   const router = useRouter();
   const [isParticipantsOpen, setIsParticipantsOpen] = useState(false);
-  const isHost = true;
+  const [loading, setLoading] = useState(true);
+  const hostId = meetingData?.host?.id ?? meetingData?.host;
+
+  const isHost = Boolean(
+    user?.id && hostId && hostId.toString() === user?.id.toString(),
+  );
 
   const handleMeetingEnded = useCallback(() => {
     router.push("/dashboard");
@@ -42,7 +48,7 @@ export default function MeetingRoom({ meetingId, user }: Props) {
   const handleLeave = () => {
     toast.error("You have left the meeting.", {
       richColors: true,
-      position: "top-center",
+      position: "bottom-center",
     });
 
     router.push("/dashboard");
@@ -53,11 +59,21 @@ export default function MeetingRoom({ meetingId, user }: Props) {
 
     toast.error("Meeting ended for all participants.", {
       richColors: true,
-      position: "top-center",
+      position: "bottom-center",
     });
 
     router.push("/dashboard");
   };
+
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      setLoading(false);
+    }, 2000);
+
+    return () => clearTimeout(timeoutId);
+  }, []);
+
+  if (loading) return <Loader text="Joining meeting room..." />;
 
   return (
     <>
@@ -87,7 +103,7 @@ export default function MeetingRoom({ meetingId, user }: Props) {
         />
       </div>
       <ControlBar
-        roomId={meetingId ?? dummyMeetingDetails.meetingId}
+        roomId={meetingId ?? meetingData?.meetingId}
         audioEnabled={audioEnabled}
         videoEnabled={videoEnabled}
         onToggleAudio={toggleAudio}
